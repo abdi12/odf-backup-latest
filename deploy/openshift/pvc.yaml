@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: odf-backup-state
+  labels:
+    app: odf-backup
+spec:
+  accessModes:
+    - ReadWriteOnce            # block storage: SQLite needs a local filesystem, not NFS/CephFS
+  resources:
+    requests:
+      storage: 20Gi            # about 47 MB per 105k result records, so roughly 17 GB a year
+  # storageClassName: ocs-storagecluster-ceph-rbd     # ODF block; on ROSA use gp3-csi

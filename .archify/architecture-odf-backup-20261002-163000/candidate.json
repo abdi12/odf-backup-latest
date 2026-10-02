@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "odf-backup runtime architecture",
+    "output": ".archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/ams/odf-backup-latest",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "0000000000000000000000000000000000000000"
+    }
+  },
+  "components": [
+    {
+      "id": "scheduler",
+      "type": "external",
+      "label": "Operator / Scheduler",
+      "sublabel": "CronJob or Docker Compose",
+      "pos": [30, 250],
+      "size": [150, 70],
+      "sources": [
+        { "path": "README.md", "line": 1, "end_line": 18, "label": "runtime model" }
+      ]
+    },
+    {
+      "id": "cli",
+      "type": "backend",
+      "label": "python -m app",
+      "sublabel": "CLI entrypoint",
+      "pos": [250, 250],
+      "size": [150, 70],
+      "sources": [
+        { "path": "app/__main__.py", "line": 1, "end_line": 77, "label": "CLI entrypoint" }
+      ]
+    },
+    {
+      "id": "config",
+      "type": "security",
+      "label": "Settings + validation",
+      "sublabel": "app/config.py",
+      "pos": [470, 150],
+      "size": [180, 74],
+      "sources": [
+        { "path": "app/config.py", "line": 1, "end_line": 179, "label": "fail-fast config" }
+      ]
+    },
+    {
+      "id": "runloop",
+      "type": "backend",
+      "label": "Run loop + lock",
+      "sublabel": "app/runner.py",
+      "pos": [470, 300],
+      "size": [180, 92],
+      "sources": [
+        { "path": "app/runner.py", "line": 1, "end_line": 170, "label": "orchestration" }
+      ]
+    },
+    {
+      "id": "db_reader",
+      "type": "database",
+      "label": "MSSQL reader",
+      "sublabel": "SELECT docUrl, createdDate",
+      "pos": [700, 250],
+      "size": [180, 76],
+      "sources": [
+        { "path": "app/db.py", "line": 1, "end_line": 55, "label": "read-only query" }
+      ]
+    },
+    {
+      "id": "mssql",
+      "type": "database",
+      "label": "MSSQL source",
+      "sublabel": "read-only production DB",
+      "pos": [930, 200],
+      "size": [180, 76],
+      "sources": [
+        { "path": "README.md", "line": 1, "end_line": 30, "label": "source requirements" }
+      ]
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "label": "SQLite state DB",
+      "sublabel": "watermarks, retries, totals",
+      "pos": [700, 468],
+      "size": [180, 84],
+      "sources": [
+        { "path": "app/state.py", "line": 1, "end_line": 220, "label": "persisted state" }
+      ]
+    },
+    {
+      "id": "copy",
+      "type": "backend",
+      "label": "Object copy worker",
+      "sublabel": "copier.py + boto3 S3 clients",
+      "pos": [470, 530],
+      "size": [190, 92],
+      "sources": [
+        { "path": "app/copier.py", "line": 1, "end_line": 88, "label": "copy logic" },
+        { "path": "app/s3.py", "line": 1, "end_line": 31, "label": "S3 clients" }
+      ]
+    },
+    {
+      "id": "odf",
+      "type": "cloud",
+      "label": "ODF S3 bucket",
+      "sublabel": "source objects",
+      "pos": [930, 430],
+      "size": [180, 76],
+      "sources": [
+        { "path": "README.md", "line": 1, "end_line": 40, "label": "ODF mirror model" }
+      ]
+    },
+    {
+      "id": "minio",
+      "type": "cloud",
+      "label": "MinIO backup bucket",
+      "sublabel": "destination objects",
+      "pos": [930, 580],
+      "size": [180, 76],
+      "sources": [
+        { "path": "README.md", "line": 1, "end_line": 40, "label": "backup bucket" }
+      ]
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "Optional Postgres sink",
+      "sublabel": "reports + results",
+      "pos": [250, 610],
+      "size": [180, 76],
+      "sources": [
+        { "path": "README.md", "line": 52, "end_line": 90, "label": "optional reporting" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Runtime service boundary",
+      "wraps": ["cli", "config", "runloop", "db_reader", "state", "copy", "pg"]
+    },
+    {
+      "kind": "region",
+      "label": "Production source boundary",
+      "wraps": ["mssql", "odf"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Read-only MSSQL trust boundary",
+      "wraps": ["db_reader", "mssql"]
+    }
+  ],
+  "connections": [
+    { "id": "trigger", "from": "scheduler", "to": "cli", "label": "trigger", "variant": "emphasis" },
+    { "id": "startup", "from": "cli", "to": "runloop", "label": "run cycle", "variant": "emphasis" },
+    { "id": "scan", "from": "runloop", "to": "db_reader", "label": "SELECT window", "variant": "default" },
+    { "id": "mssql-read", "from": "db_reader", "to": "mssql", "label": "read-only rows", "variant": "security" },
+    { "id": "state-write", "from": "runloop", "to": "state", "label": "watermark + retries", "variant": "default" },
+    { "id": "copy-object", "from": "runloop", "to": "copy", "label": "mirror objects", "variant": "emphasis" },
+    { "id": "source-get", "from": "copy", "to": "odf", "label": "GET source object", "variant": "default" },
+    { "id": "dest-put", "from": "copy", "to": "minio", "label": "PUT backup object", "variant": "default" },
+    { "id": "report-publish", "from": "runloop", "to": "pg", "label": "publish results", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Primary path",
+      "items": [
+        "The run loop validates config, reads a createdDate window from MSSQL, and copies missing objects into MinIO.",
+        "Each row is tracked in SQLite so retries, watermark progress, and reconcile state survive restarts."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Trust model",
+      "items": [
+        "MSSQL is treated as read-only and never mutated by the service.",
+        "The local SQLite volume is the source of truth for runtime progress and transient failure state.",
+        "The MinIO bucket is the controlled backup destination; Postgres is optional and reporting-only."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "External dependencies",
+      "items": [
+        "ODF RGW/S3 source bucket for object retrieval.",
+        "MinIO destination bucket for backup writes.",
+        "Optional PostgreSQL store for long-lived reporting and result tables."
+      ]
+    }
+  ]
+}

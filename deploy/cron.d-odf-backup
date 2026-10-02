@@ -1,0 +1,6 @@
+# /etc/cron.d/odf-backup  — every 10 minutes
+# The app holds a lock in its /data volume, so a slow run makes the next tick exit cleanly.
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+*/10 * * * * root cd /opt/odf-backup && docker compose run --rm odf-backup run >> /var/log/odf-backup/run.log 2>&1

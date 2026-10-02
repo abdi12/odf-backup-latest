@@ -1,0 +1,33 @@
+services:
+  odf-backup:
+    build: .
+    image: odf-backup:1.0.0
+    env_file: .env
+    volumes:
+      - odf-backup-state:/data
+      # Internal CA(s) for the ODF route and MinIO, if not publicly trusted
+      - ./certs:/certs:ro
+    secrets:
+      - mssql_password
+      - src_s3_secret_key
+      - dst_s3_secret_key
+    environment:
+      MSSQL_PASSWORD_FILE: /run/secrets/mssql_password
+      SRC_S3_SECRET_KEY_FILE: /run/secrets/src_s3_secret_key
+      DST_S3_SECRET_KEY_FILE: /run/secrets/dst_s3_secret_key
+    logging:
+      driver: json-file
+      options: { max-size: "50m", max-file: "5" }
+    # No restart policy: this is a run-once job triggered by cron.
+    restart: "no"
+
+volumes:
+  odf-backup-state:
+
+secrets:
+  mssql_password:
+    file: ./secrets/mssql_password
+  src_s3_secret_key:
+    file: ./secrets/src_s3_secret_key
+  dst_s3_secret_key:
+    file: ./secrets/dst_s3_secret_key

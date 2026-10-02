@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: odf-backup
+  labels:
+    app: odf-backup
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid            # never two runs at once (the app also holds a lock)
+  startingDeadlineSeconds: 300
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0                  # a failed run is simply retried by the next tick
+      activeDeadlineSeconds: 1200
+      template:
+        metadata:
+          labels:
+            app: odf-backup
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: odf-backup
+              # Change "odf-backup/" if you deploy into another namespace.
+              image: image-registry.openshift-image-registry.svc:5000/odf-backup/odf-backup:latest
+              imagePullPolicy: Always
+              args: ["run"]
+              envFrom:
+                - configMapRef:
+                    name: odf-backup-config
+                - secretRef:
+                    name: odf-backup-secret
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 256Mi
+                limits:
+                  cpu: "2"
+                  memory: 1Gi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: state
+                  mountPath: /data
+                - name: ca
+                  mountPath: /certs
+                  readOnly: true
+          volumes:
+            - name: state
+              persistentVolumeClaim:
+                claimName: odf-backup-state
+            - name: ca
+              configMap:
+                name: odf-backup-ca    # key: ca-bundle.pem
+                optional: true

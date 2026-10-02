@@ -1,0 +1,23 @@
+# Red Hat UBI 9 image for OpenShift (used by deploy/openshift/build.yaml).
+FROM registry.access.redhat.com/ubi9/python-312:latest
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+USER 0
+# Microsoft ODBC Driver 18 for SQL Server (RHEL 9 repo)
+RUN curl -fsSL https://packages.microsoft.com/config/rhel/9/prod.repo \
+      -o /etc/yum.repos.d/mssql-release.repo \
+ && ACCEPT_EULA=Y dnf install -y --setopt=tsflags=nodocs msodbcsql18 unixODBC \
+ && dnf clean all && rm -rf /var/cache/dnf
+
+WORKDIR /opt/odf-backup
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app ./app
+
+# OpenShift runs the container with a random UID in group 0.
+RUN mkdir -p /data && chgrp -R 0 /opt/odf-backup /data && chmod -R g=u /opt/odf-backup /data
+USER 1001
+
+ENTRYPOINT ["python", "-m", "app"]
+CMD ["run"]

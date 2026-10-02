@@ -1,0 +1,31 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: odf-backup
+  labels:
+    app: odf-backup
+---
+# Binary build: the source is uploaded with
+#   oc start-build odf-backup --from-dir=. --follow
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: odf-backup
+  labels:
+    app: odf-backup
+spec:
+  runPolicy: Serial
+  source:
+    type: Binary
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Dockerfile.ubi
+  output:
+    to:
+      kind: ImageStreamTag
+      name: odf-backup:latest
+  resources:
+    limits:
+      cpu: "1"
+      memory: 2Gi

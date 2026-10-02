@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "title": "ODF Backup High-Level Architecture",
+    "output": "odf-backup.html",
+    "type": "architecture",
+    "quality_profile": "showcase"
+  },
+  "nodes": [
+    {
+      "id": "operator",
+      "type": "actor",
+      "title": "Operator / Scheduler",
+      "x": 40,
+      "y": 210,
+      "w": 180,
+      "h": 90,
+      "description": "Runs the service from OpenShift CronJob or Docker Compose"
+    },
+    {
+      "id": "cron",
+      "type": "service",
+      "title": "CronJob / Run loop",
+      "x": 260,
+      "y": 180,
+      "w": 220,
+      "h": 120,
+      "description": "Invokes python -m app run every 10 minutes"
+    },
+    {
+      "id": "service",
+      "type": "service",
+      "title": "odf-backup service",
+      "x": 550,
+      "y": 130,
+      "w": 270,
+      "h": 220,
+      "description": "Validates config, reads MSSQL window, copies objects, tracks retries and backfill"
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "title": "SQLite state DB",
+      "x": 560,
+      "y": 420,
+      "w": 250,
+      "h": 120,
+      "description": "/data/state.db stores watermarks, retries, totals, and run records"
+    },
+    {
+      "id": "mssql",
+      "type": "database",
+      "title": "MSSQL source",
+      "x": 920,
+      "y": 110,
+      "w": 240,
+      "h": 110,
+      "description": "Read-only source of docUrl and createdDate rows"
+    },
+    {
+      "id": "odf",
+      "type": "storage",
+      "title": "ODF S3 bucket",
+      "x": 920,
+      "y": 260,
+      "w": 240,
+      "h": 110,
+      "description": "Source bucket containing the original object files"
+    },
+    {
+      "id": "minio",
+      "type": "storage",
+      "title": "MinIO backup bucket",
+      "x": 920,
+      "y": 410,
+      "w": 240,
+      "h": 110,
+      "description": "Destination bucket receiving mirrored objects"
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "title": "Optional PostgreSQL reporting",
+      "x": 560,
+      "y": 600,
+      "w": 250,
+      "h": 120,
+      "description": "Publishes backup_result, backup_failure, and reconcile summaries when PG_HOST is set"
+    }
+  ],
+  "relationships": [
+    { "from": "operator", "to": "cron", "label": "triggers" },
+    { "from": "cron", "to": "service", "label": "python -m app run" },
+    { "from": "service", "to": "mssql", "label": "SELECT docUrl, createdDate" },
+    { "from": "service", "to": "odf", "label": "GET object" },
+    { "from": "service", "to": "minio", "label": "PUT object with MD5" },
+    { "from": "service", "to": "state", "label": "watermark + retry + totals" },
+    { "from": "service", "to": "pg", "label": "publish result rows (optional)" },
+    { "from": "service", "to": "odf", "label": "reconcile and verify missing data" },
+    { "from": "service", "to": "minio", "label": "verify existence and size" }
+  ],
+  "boundaries": [
+    { "id": "runtime", "title": "Service runtime boundary", "x": 500, "y": 90, "w": 710, "h": 660 },
+    { "id": "source", "title": "Production source systems", "x": 900, "y": 70, "w": 290, "h": 340 },
+    { "id": "backup", "title": "Backup storage", "x": 900, "y": 390, "w": 290, "h": 180 }
+  ]
+}

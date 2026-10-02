@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odf-backup-config
+  labels:
+    app: odf-backup
+data:
+  TZ: "Asia/Jakarta"                      # timestamps in logs and result records
+
+  # ---------- MSSQL (read only: the service only runs SELECT here) ----------
+  MSSQL_HOST: "mssql.example.local"
+  MSSQL_PORT: "1433"
+  MSSQL_DATABASE: "DocumentDB"
+  MSSQL_ENCRYPT: "true"
+  MSSQL_TRUST_SERVER_CERT: "false"
+  SOURCE_TABLE: "dbo.Documents"
+  COL_DOC_URL: "docUrl"
+  COL_CREATED: "createdDate"
+  CREATED_DATE_IS_UTC: "false"            # true only if createdDate is stored in UTC
+
+  # ---------- Source: ODF S3 ----------
+  SRC_S3_ENDPOINT: "https://storage.apps.btpnsyariah.com"
+  # If this runs on the same cluster as ODF you can use the internal service instead:
+  #   RGW:    https://rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc
+  #   NooBaa: https://s3.openshift-storage.svc
+  # and set SRC_S3_CA_BUNDLE to /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+  SRC_S3_BUCKET: "images"
+  SRC_URL_HOST: "storage.apps.btpnsyariah.com"   # docUrls on other hosts are rejected
+  SRC_S3_CA_BUNDLE: "/certs/ca-bundle.pem"       # remove if the route uses a public CA
+
+  # ---------- Destination: MinIO ----------
+  DST_S3_ENDPOINT: "https://minio.example.local:9000"
+  DST_S3_BUCKET: "images-backup"
+  DST_S3_PREFIX: ""
+  DST_S3_CA_BUNDLE: "/certs/ca-bundle.pem"       # remove if MinIO uses a public CA
+
+  # ---------- Incremental mirror ----------
+  STATE_DIR: "/data"
+  WORKERS: "16"
+  OVERLAP_MINUTES: "15"
+  SAFETY_LAG_MINUTES: "2"
+  START_FROM: ""                          # first run only; empty = today 00:00 (DB clock)
+  MAX_ATTEMPTS: "10"
+  RETRY_BATCH: "5000"
+  MAX_RUN_MINUTES: "9"
+  STRICT_EXIT: "false"                    # copy errors are retried next run; don't fail the Job
+  LOG_LEVEL: "INFO"
+
+  # ---------- Backfill ----------
+  # Set BACKFILL_FROM to mirror older data; progress is kept on the PVC.
+  # BACKFILL_TO empty = the moment incremental mirroring started.
+  BACKFILL_FROM: ""                       # e.g. 2026-01-01T00:00:00
+  BACKFILL_TO: ""
+  BACKFILL_CHUNK_MINUTES: "60"
+  BACKFILL_WORKERS: "8"
+
+  # ---------- Reconcile ----------
+  RECONCILE_ENABLED: "true"
+  RECONCILE_HOUR: "1"                     # yesterday is reconciled on the first run after 01:00
+  RECONCILE_VERIFY_DEST: "true"           # check every object in MinIO, not only local records
+
+  # ---------- Result records ----------
+  # Always kept in /data/state.db. With PG_HOST set they are also written to Postgres.
+  RESULT_RETENTION_DAYS: "0"              # 0 = keep every record on the PVC as well
+  PG_HOST: "doma-db-backup.devops-prd.svc"   # empty = state.db only
+  PG_PORT: "5432"
+  PG_DATABASE: "doma-object"
+  PG_SCHEMA: "public"
+  PG_SSLMODE: "prefer"                    # use "require" or "verify-full" if the server has TLS

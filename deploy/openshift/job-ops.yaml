@@ -1,0 +1,66 @@
+# One-off command against the same state volume. Edit "args", then:
+#   oc create -f deploy/openshift/job-ops.yaml
+#   oc logs -f job/<name printed by the command above>
+#
+# args examples:
+#   ["status"]
+#   ["reconcile", "--date", "2026-10-01"]
+#   ["requeue", "--status", "dead"]
+#   ["pg-ddl"]
+#
+# The volume is ReadWriteOnce: if a scheduled run is active on another node this
+# pod waits until that run has finished.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: odf-backup-ops-
+  labels:
+    app: odf-backup
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: odf-backup
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: odf-backup
+          image: image-registry.openshift-image-registry.svc:5000/odf-backup/odf-backup:latest
+          imagePullPolicy: Always
+          args: ["status"]
+          envFrom:
+            - configMapRef:
+                name: odf-backup-config
+            - secretRef:
+                name: odf-backup-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: state
+              mountPath: /data
+            - name: ca
+              mountPath: /certs
+              readOnly: true
+      volumes:
+        - name: state
+          persistentVolumeClaim:
+            claimName: odf-backup-state
+        - name: ca
+          configMap:
+            name: odf-backup-ca
+            optional: true

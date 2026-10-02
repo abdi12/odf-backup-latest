@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ODF Backup High-Level Architecture</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --border: #d5dce6;
+      --text: #1f2a37;
+      --muted: #52607a;
+      --primary: #2d6cdf;
+      --primary-soft: #dfeaff;
+      --success: #0f9f6e;
+      --success-soft: #dcf7ee;
+      --warn: #b76e00;
+      --warn-soft: #fff0d6;
+      --danger: #c84c4c;
+      --danger-soft: #ffe4e4;
+      --db: #7b5ef4;
+      --db-soft: #efe9ff;
+      --store: #0b7285;
+      --store-soft: #dff7fb;
+      --shadow: 0 12px 30px rgba(18, 32, 58, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+      font-family: "Segoe UI", sans-serif;
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1500px;
+      margin: 32px auto;
+      padding: 20px;
+    }
+
+    .header {
+      margin-bottom: 18px;
+    }
+
+    .header h1 {
+      margin: 0 0 6px;
+      font-size: 2rem;
+    }
+
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    svg {
+      width: 100%;
+      min-height: 820px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .boundary {
+      fill: rgba(98, 125, 184, 0.06);
+      stroke: #9eadc6;
+      stroke-dasharray: 8 8;
+      stroke-width: 1.5;
+    }
+
+    .boundary-label {
+      font-size: 16px;
+      font-weight: 600;
+      fill: var(--muted);
+    }
+
+    .node {
+      rx: 18;
+      ry: 18;
+      stroke-width: 2;
+      filter: drop-shadow(0 5px 12px rgba(25, 42, 72, 0.08));
+    }
+
+    .actor { fill: #f9f5ff; stroke: #a78bfa; }
+    .service { fill: #edf6ff; stroke: var(--primary); }
+    .database { fill: var(--db-soft); stroke: var(--db); }
+    .storage { fill: var(--store-soft); stroke: var(--store); }
+    .label {
+      font-size: 20px;
+      font-weight: 700;
+      fill: var(--text);
+    }
+    .subtitle {
+      font-size: 13px;
+      fill: var(--muted);
+    }
+
+    .arrow {
+      stroke: #4f5f7a;
+      stroke-width: 2.2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    .arrow-label {
+      font-size: 13px;
+      fill: var(--muted);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <h1>ODF Backup High-Level Architecture</h1>
+      <p>Read-only source detection, object mirroring, state tracking, and optional reporting.</p>
+    </div>
+
+    <svg viewBox="0 0 1500 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram of the odf-backup project">
+      <defs>
+        <marker id="arrowhead" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+          <path d="M0,0 L11,5.5 L0,11 z" fill="#4f5f7a"></path>
+        </marker>
+      </defs>
+
+      <rect class="boundary" x="500" y="80" width="730" height="660" rx="18" />
+      <text class="boundary-label" x="515" y="110">Service runtime boundary</text>
+
+      <rect class="boundary" x="900" y="60" width="290" height="340" rx="18" />
+      <text class="boundary-label" x="920" y="90">Production source systems</text>
+
+      <rect class="boundary" x="900" y="390" width="290" height="180" rx="18" />
+      <text class="boundary-label" x="920" y="420">Backup storage</text>
+
+      <rect class="node actor" x="40" y="210" width="180" height="90" />
+      <text class="label" x="130" y="250" text-anchor="middle">Operator</text>
+      <text class="subtitle" x="130" y="272" text-anchor="middle">/ Scheduler</text>
+
+      <rect class="node service" x="260" y="180" width="220" height="120" />
+      <text class="label" x="370" y="220" text-anchor="middle">CronJob</text>
+      <text class="subtitle" x="370" y="245" text-anchor="middle">OpenShift / Docker</text>
+      <text class="subtitle" x="370" y="266" text-anchor="middle">Compose</text>
+
+      <rect class="node service" x="550" y="130" width="270" height="220" />
+        <text class="label" x="685" y="170" text-anchor="middle">odf-backup service</text>
+        <text class="subtitle" x="685" y="196" text-anchor="middle">CLI + run loop</text>
+        <text class="subtitle" x="685" y="220" text-anchor="middle">config validation</text>
+        <text class="subtitle" x="685" y="244" text-anchor="middle">MSSQL delta scan</text>
+        <text class="subtitle" x="685" y="268" text-anchor="middle">S3 object copy</text>
+        <text class="subtitle" x="685" y="292" text-anchor="middle">retries + backfill</text>
+        <text class="subtitle" x="685" y="316" text-anchor="middle">reconciliation</text>
+      </rect>
+
+      <rect class="node database" x="560" y="420" width="250" height="120" />
+      <text class="label" x="685" y="465" text-anchor="middle">SQLite state DB</text>
+      <text class="subtitle" x="685" y="490" text-anchor="middle">/data/state.db</text>
+      <text class="subtitle" x="685" y="512" text-anchor="middle">watermarks + retries + totals</text>
+      </rect>
+
+      <rect class="node database" x="920" y="110" width="240" height="110" />
+      <text class="label" x="1040" y="152" text-anchor="middle">MSSQL source</text>
+      <text class="subtitle" x="1040" y="175" text-anchor="middle">read-only source</text>
+      <text class="subtitle" x="1040" y="194" text-anchor="middle">docUrl + createdDate</text>
+      </rect>
+
+      <rect class="node storage" x="920" y="260" width="240" height="110" />
+      <text class="label" x="1040" y="302" text-anchor="middle">ODF S3 bucket</text>
+      <text class="subtitle" x="1040" y="325" text-anchor="middle">source objects</text>
+      <text class="subtitle" x="1040" y="344" text-anchor="middle">images</text>
+      </rect>
+
+      <rect class="node storage" x="920" y="410" width="240" height="110" />
+      <text class="label" x="1040" y="452" text-anchor="middle">MinIO backup bucket</text>
+      <text class="subtitle" x="1040" y="475" text-anchor="middle">mirrored objects</text>
+      <text class="subtitle" x="1040" y="494" text-anchor="middle">images-backup</text>
+      </rect>
+
+      <rect class="node database" x="560" y="600" width="250" height="120" />
+      <text class="label" x="685" y="645" text-anchor="middle">Optional PostgreSQL</text>
+      <text class="subtitle" x="685" y="670" text-anchor="middle">backup_result + failures</text>
+      <text class="subtitle" x="685" y="692" text-anchor="middle">reconcile summaries</text>
+      </rect>
+
+      <path class="arrow" d="M220 255 L260 255"/>
+      <text class="arrow-label" x="230" y="242">triggers</text>
+
+      <path class="arrow" d="M480 240 L550 240"/>
+      <text class="arrow-label" x="495" y="228">run</text>
+
+      <path class="arrow" d="M820 230 L920 165"/>
+      <text class="arrow-label" x="840" y="210">SELECT rows</text>
+
+      <path class="arrow" d="M820 290 L920 315"/>
+      <text class="arrow-label" x="845" y="276">GET source object</text>
+
+      <path class="arrow" d="M820 360 L920 465"/>
+      <text class="arrow-label" x="835" y="390">PUT backup object</text>
+
+      <path class="arrow" d="M685 350 L685 420"/>
+      <text class="arrow-label" x="705" y="392">state</text>
+
+      <path class="arrow" d="M685 540 L685 600"/>
+      <text class="arrow-label" x="700" y="575">publish</text>
+
+      <path class="arrow" d="M760 350 L930 470"/>
+      <text class="arrow-label" x="800" y="370">verify existence/size</text>
+    </svg>
+  </div>
+</body>
+</html>

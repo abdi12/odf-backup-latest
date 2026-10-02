@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
+    "sha256": "bc1993e92d993de8904766d437ebaaa737c7e316a3e30ef5782e05a55e3098b3",
+    "bytes": 6322
+  },
+  "artifact": {
+    "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html"
+  },
+  "gates": {
+    "validate": "fail",
+    "deliver": "not-run",
+    "check": "not-run",
+    "browser-check": "not-run"
+  },
+  "failedStage": "validate",
+  "diagnostics": [
+    {
+      "code": "repository-evidence/git-command",
+      "severity": "error",
+      "message": "Evidence root \"/home/ams/script/ceph/odf-backup-latest\" is not a Git repository.",
+      "subject": {
+        "surface": "repository-evidence"
+      },
+      "evidence": {
+        "gitArgs": [
+          "rev-parse",
+          "--show-toplevel"
+        ],
+        "exitCode": 128
+      },
+      "supportedFixes": [
+        "use the intended local Git repository and verify its origin and revision"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize.json",
+    "summaryReceipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize-summary.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.0.1",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-02T09:29:34.107Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 732,
+  "nextAction": {
+    "action": "edit-in-place",
+    "candidate": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
+    "constraint": "Preserve all semantics and user-fixed geometry. Use references/architecture-layout-repair.md to choose a local repair or connected-scene reflow; edit the existing candidate.",
+    "then": "finalize-once"
+  }
+}

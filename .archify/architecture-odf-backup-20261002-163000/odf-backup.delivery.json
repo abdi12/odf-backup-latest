@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "532005cb-4e2b-406a-b3f2-47103cc85a00",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
+  "output": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+  "specification": {
+    "sha256": "ee0662adac62b74f53aad2c95cf94266a723bc0787823eb13d803dc05c829f15",
+    "bytes": 6325
+  },
+  "artifact": {
+    "sha256": "14ec38f2be1ce101b131e31dd76fb9881935c5358afd585864d04e6ccbbf01d5",
+    "bytes": 770238
+  }
+}

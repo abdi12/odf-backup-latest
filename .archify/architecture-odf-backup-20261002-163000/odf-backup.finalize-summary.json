@@ -2,41 +2,39 @@
   "schemaVersion": 1,
   "ok": false,
   "command": "finalize",
-  "status": "fail",
+  "status": "skipped",
   "type": "architecture",
   "quality": "showcase",
   "specification": {
     "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
-    "sha256": "bc1993e92d993de8904766d437ebaaa737c7e316a3e30ef5782e05a55e3098b3",
-    "bytes": 6322
+    "sha256": "ee0662adac62b74f53aad2c95cf94266a723bc0787823eb13d803dc05c829f15",
+    "bytes": 6325
   },
   "artifact": {
-    "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html"
+    "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+    "sha256": "14ec38f2be1ce101b131e31dd76fb9881935c5358afd585864d04e6ccbbf01d5",
+    "bytes": 770238
   },
   "gates": {
-    "validate": "fail",
-    "deliver": "not-run",
-    "check": "not-run",
-    "browser-check": "not-run"
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "skipped"
   },
-  "failedStage": "validate",
+  "failedStage": "browser-check",
   "diagnostics": [
     {
-      "code": "repository-evidence/git-command",
-      "severity": "error",
-      "message": "Evidence root \"/home/ams/script/ceph/odf-backup-latest\" is not a Git repository.",
+      "code": "viewer/chrome-unavailable",
+      "severity": "warning",
+      "message": "Chrome or Chromium is unavailable. Set ARCHIFY_CHROME to its executable path.",
       "subject": {
-        "surface": "repository-evidence"
+        "artifact": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html"
       },
       "evidence": {
-        "gitArgs": [
-          "rev-parse",
-          "--show-toplevel"
-        ],
-        "exitCode": 128
+        "executable": null
       },
       "supportedFixes": [
-        "use the intended local Git repository and verify its origin and revision"
+        "set ARCHIFY_CHROME to a Chrome or Chromium executable and rerun browser-check"
       ]
     }
   ],
@@ -47,7 +45,8 @@
   },
   "evidence": {
     "receipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize.json",
-    "summaryReceipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize-summary.json"
+    "summaryReceipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize-summary.json",
+    "browserCheckReceipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.browser-check.json"
   },
   "update": {
     "status": "current",
@@ -60,11 +59,5 @@
     "noticeText": null
   },
   "visualReview": "not-requested",
-  "durationMs": 732,
-  "nextAction": {
-    "action": "edit-in-place",
-    "candidate": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
-    "constraint": "Preserve all semantics and user-fixed geometry. Use references/architecture-layout-repair.md to choose a local repair or connected-scene reflow; edit the existing candidate.",
-    "then": "finalize-once"
-  }
+  "durationMs": 1547
 }

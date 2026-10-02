@@ -6,10 +6,10 @@
     "output": ".archify/architecture-odf-backup-20261002-163000/odf-backup.html",
     "quality_profile": "showcase",
     "repository": {
-      "url": "https://github.com/ams/odf-backup-latest",
+      "url": "https://github.com/abdi12/odf-backup-latest",
       "provider": "github",
       "link_mode": "web",
-      "revision": "0000000000000000000000000000000000000000"
+      "revision": "7860a237fb4f68cef8649bf9a00f343abe56f210"
     }
   },
   "components": [

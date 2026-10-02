@@ -2,23 +2,26 @@
   "schemaVersion": 1,
   "ok": false,
   "command": "finalize",
-  "status": "fail",
+  "status": "skipped",
   "type": "architecture",
   "quality": "showcase",
-  "startedAt": "2026-10-02T12:00:00.176Z",
+  "startedAt": "2026-10-02T12:15:28.275Z",
   "specification": {
     "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
-    "sha256": "bc1993e92d993de8904766d437ebaaa737c7e316a3e30ef5782e05a55e3098b3",
-    "bytes": 6322
+    "sha256": "ee0662adac62b74f53aad2c95cf94266a723bc0787823eb13d803dc05c829f15",
+    "bytes": 6325
   },
   "artifact": {
-    "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html"
+    "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+    "sha256": "14ec38f2be1ce101b131e31dd76fb9881935c5358afd585864d04e6ccbbf01d5",
+    "bytes": 770238
   },
   "stages": {
     "validate": {
-      "status": "fail",
-      "exitCode": 1,
+      "status": "pass",
+      "exitCode": 0,
       "durationMs": null,
+      "execution": "embedded-in-deliver",
       "command": [
         "/home/ams/.nvm/versions/node/v24.14.1/bin/node",
         "/home/ams/script/ceph/odf-backup-latest/.claude/skills/archify/bin/archify.mjs",
@@ -34,35 +37,69 @@
       ],
       "receipt": {
         "schemaVersion": 1,
-        "ok": false,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "ee0662adac62b74f53aad2c95cf94266a723bc0787823eb13d803dc05c829f15",
+          "bytes": 6325
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 783,
+      "command": [
+        "/home/ams/.nvm/versions/node/v24.14.1/bin/node",
+        "/home/ams/script/ceph/odf-backup-latest/.claude/skills/archify/bin/archify.mjs",
+        "deliver",
+        "architecture",
+        "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
+        "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "/home/ams/script/ceph/odf-backup-latest",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "532005cb-4e2b-406a-b3f2-47103cc85a00",
+        "ok": true,
         "command": "deliver",
-        "receiptId": "46c41dd4-bd79-4573-887c-1558181f3ada",
-        "stage": "render",
         "type": "architecture",
         "input": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
         "output": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
-        "error": "Evidence root \"/home/ams/script/ceph/odf-backup-latest\" is not a Git repository.",
-        "diagnostics": [
-          {
-            "code": "repository-evidence/git-command",
-            "severity": "error",
-            "message": "Evidence root \"/home/ams/script/ceph/odf-backup-latest\" is not a Git repository.",
-            "subject": {
-              "surface": "repository-evidence"
-            },
-            "evidence": {
-              "gitArgs": [
-                "rev-parse",
-                "--show-toplevel"
-              ],
-              "exitCode": 128
-            },
-            "supportedFixes": [
-              "use the intended local Git repository and verify its origin and revision"
-            ]
-          }
-        ],
-        "provenance": "absent",
+        "specification": {
+          "sha256": "ee0662adac62b74f53aad2c95cf94266a723bc0787823eb13d803dc05c829f15",
+          "bytes": 6325
+        },
+        "artifact": {
+          "sha256": "14ec38f2be1ce101b131e31dd76fb9881935c5358afd585864d04e6ccbbf01d5",
+          "bytes": 770238
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "evidence": {
+          "verified": true,
+          "repository": "https://github.com/abdi12/odf-backup-latest",
+          "revision": "7860a237fb4f68cef8649bf9a00f343abe56f210",
+          "references": 12
+        },
         "update": {
           "status": "unavailable",
           "installedVersion": null,
@@ -74,42 +111,296 @@
           "noticeText": null,
           "reason": "disabled"
         }
-      },
-      "execution": "embedded-in-deliver"
+      }
     },
-    "deliver": {
-      "status": "not-run",
-      "execution": "blocked-by-validate"
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 235,
+      "command": [
+        "/home/ams/.nvm/versions/node/v24.14.1/bin/node",
+        "/home/ams/script/ceph/odf-backup-latest/.claude/skills/archify/bin/archify.mjs",
+        "check",
+        "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+        "artifact": {
+          "sha256": "14ec38f2be1ce101b131e31dd76fb9881935c5358afd585864d04e6ccbbf01d5",
+          "bytes": 770238
+        },
+        "checks": [
+          {
+            "name": "single_svg",
+            "ok": true,
+            "details": [
+              "found 1 <svg> block(s)"
+            ]
+          },
+          {
+            "name": "finite_svg",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "orthogonal_arrows",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "label_route_clearance",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_crossings",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_corridors",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "container_border_runs",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "route_rhythm",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "legend_clearance",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "metrics": {
+            "properCrossings": 0,
+            "resolvedCrossovers": 1,
+            "ambiguousCorridors": 0,
+            "arrowheadCollisions": 0,
+            "containerBorderRuns": 0,
+            "labelRouteClearanceIssues": 0,
+            "labelCanvasOverflowIssues": 0,
+            "minLabelRouteClearance": 15.9,
+            "desktopReadabilityIssues": 0,
+            "viewportHeightIssues": 0,
+            "minProjectedNodeTextPx": 6.305084745762712,
+            "maxBends": 3,
+            "routesOverSuggestedBends": 1,
+            "maxStretch": 1.092,
+            "routesOverSuggestedStretch": 0,
+            "minSegmentPx": 24,
+            "minInteriorSegmentPx": 35,
+            "shortSegmentCount": 0,
+            "shortEndpointSegmentCount": 0,
+            "shortInteriorSegmentCount": 0,
+            "microSegmentCount": 0
+          },
+          "suggestedLimits": {
+            "bendsPerRelationship": 2,
+            "stretch": 1.35,
+            "segmentPx": 16,
+            "microSegmentPx": 8
+          },
+          "routeReview": {
+            "crossings": [
+              {
+                "left": {
+                  "id": "source-get",
+                  "from": "copy",
+                  "to": "odf",
+                  "label": "GET source object",
+                  "collectionIndex": 6,
+                  "artifactIndex": 7
+                },
+                "right": {
+                  "id": "dest-put",
+                  "from": "copy",
+                  "to": "minio",
+                  "label": "PUT backup object",
+                  "collectionIndex": 7,
+                  "artifactIndex": 8
+                },
+                "point": [
+                  906,
+                  618
+                ],
+                "sharedNode": "copy"
+              }
+            ],
+            "detours": [
+              {
+                "relationship": {
+                  "id": "source-get",
+                  "from": "copy",
+                  "to": "odf",
+                  "label": "GET source object",
+                  "collectionIndex": 6,
+                  "artifactIndex": 7
+                },
+                "bends": 3,
+                "stretch": 1.092
+              }
+            ]
+          },
+          "leadingSpace": {
+            "measured": true,
+            "emptyTopPx": 120,
+            "emptyTopRatio": 0.155,
+            "occupiedTop": 120,
+            "viewBoxTop": 0,
+            "canvasHeight": 774,
+            "typicalNodeHeight": 76,
+            "reviewSuggested": false
+          },
+          "desktopReadability": {
+            "budgetBasis": "legacy-930",
+            "readerContract": "declared-wide-v1",
+            "availableDiagramWidth": 930,
+            "actualBudgetPx": 930,
+            "limit": "legacy",
+            "requestedTargetPx": 7.5,
+            "requestedTargetMet": false,
+            "hardFloorPx": 6,
+            "hardFloorMet": true,
+            "minimumOwner": {
+              "kind": "edge",
+              "id": "trigger",
+              "from": "scheduler",
+              "to": "cli"
+            },
+            "minimumSourceTextPx": 8,
+            "minimumProjectedTextPx": 6.305084745762712,
+            "semanticTextCount": 34
+          },
+          "issues": []
+        },
+        "provenance": "current",
+        "deliveryReceiptId": "532005cb-4e2b-406a-b3f2-47103cc85a00"
+      }
+    },
+    "browser-check": {
+      "status": "skipped",
+      "exitCode": 2,
+      "durationMs": 29,
+      "command": [
+        "/home/ams/.nvm/versions/node/v24.14.1/bin/node",
+        "/home/ams/script/ceph/odf-backup-latest/.claude/skills/archify/bin/archify.mjs",
+        "browser-check",
+        "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+        "--json",
+        "--require-provenance"
+      ],
+      "execution": "in-process",
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "browser-check",
+        "evidenceKind": "automated-browser",
+        "status": "skipped",
+        "visualReview": "not-requested",
+        "provenance": "current",
+        "deliveryReceiptId": "532005cb-4e2b-406a-b3f2-47103cc85a00",
+        "artifact": {
+          "path": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html",
+          "sha256": "14ec38f2be1ce101b131e31dd76fb9881935c5358afd585864d04e6ccbbf01d5",
+          "bytes": 770238
+        },
+        "state": {
+          "detail": "read",
+          "motion": "still"
+        },
+        "chrome": {
+          "status": "unavailable",
+          "executable": null
+        },
+        "diagnostics": [
+          {
+            "code": "viewer/chrome-unavailable",
+            "severity": "warning",
+            "message": "Chrome or Chromium is unavailable. Set ARCHIFY_CHROME to its executable path.",
+            "subject": {
+              "artifact": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html"
+            },
+            "evidence": {
+              "executable": null
+            },
+            "supportedFixes": [
+              "set ARCHIFY_CHROME to a Chrome or Chromium executable and rerun browser-check"
+            ]
+          }
+        ],
+        "containment": {
+          "status": "skipped",
+          "policy": "fit-or-reader-declared-readable-vertical-scroll",
+          "viewports": []
+        },
+        "themeStates": {
+          "status": "skipped",
+          "viewports": []
+        },
+        "readability": {
+          "status": "skipped",
+          "minimumProjectedNodeTextPx": 6,
+          "viewports": []
+        },
+        "viewerChrome": {
+          "status": "skipped",
+          "viewports": []
+        },
+        "captures": {
+          "status": "not-requested",
+          "screenshots": [],
+          "contactSheet": null
+        },
+        "sidecars": {
+          "receipt": "odf-backup.browser-check.json",
+          "files": []
+        },
+        "error": "Chrome or Chromium is unavailable. Set ARCHIFY_CHROME to its executable path."
+      }
     }
   },
   "diagnostics": [
     {
-      "code": "repository-evidence/git-command",
-      "severity": "error",
-      "message": "Evidence root \"/home/ams/script/ceph/odf-backup-latest\" is not a Git repository.",
+      "code": "viewer/chrome-unavailable",
+      "severity": "warning",
+      "message": "Chrome or Chromium is unavailable. Set ARCHIFY_CHROME to its executable path.",
       "subject": {
-        "surface": "repository-evidence"
+        "artifact": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html"
       },
       "evidence": {
-        "gitArgs": [
-          "rev-parse",
-          "--show-toplevel"
-        ],
-        "exitCode": 128
+        "executable": null
       },
       "supportedFixes": [
-        "use the intended local Git repository and verify its origin and revision"
+        "set ARCHIFY_CHROME to a Chrome or Chromium executable and rerun browser-check"
       ]
     }
   ],
   "evidence": {
     "receipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize.json",
-    "summaryReceipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize-summary.json"
+    "summaryReceipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.finalize-summary.json",
+    "browserCheckReceipt": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.browser-check.json"
   },
   "visualReview": "not-requested",
-  "failedStage": "validate",
-  "finishedAt": "2026-10-02T11:59:56.536Z",
-  "durationMs": 732,
+  "failedStage": "browser-check",
+  "finishedAt": "2026-10-02T12:15:29.822Z",
+  "durationMs": 1547,
   "update": {
     "status": "current",
     "installedVersion": "3.0.1",

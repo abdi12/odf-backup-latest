@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "command": "deliver",
-  "status": "pending",
-  "receiptId": "46c41dd4-bd79-4573-887c-1558181f3ada",
-  "input": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/candidate.json",
-  "output": "/home/ams/script/ceph/odf-backup-latest/.archify/architecture-odf-backup-20261002-163000/odf-backup.html"
-}
